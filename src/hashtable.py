@@ -66,6 +66,33 @@ class HashTable:
             self.size += 1
 
 
+# Old Remove
+    # def remove(self, key):
+    #     '''
+    #     Remove the value stored with the given key.
+
+    #     Print a warning if the key is not found.
+
+    #     Fill this in.
+    #     '''
+    #     pos = self._hash_mod(key)
+    #     # Check if a pair exists in the bucket with matching keys
+    #     if self.storage[pos] is not None and self.storage[pos].key == key:
+    #         dummy_head = LinkedPair("dummy", "dummy")
+    #         head = dummy_head
+    #         dummy_head.next = self.storage[pos]
+
+    #         while head.next != None:
+    #             if head.next.key == key:
+    #                 head.next = head.next.next
+    #                 break
+    #             head = head.next
+    #         self.storage[pos] = dummy_head.next
+    #     else:
+    #         # Else print warning
+    #         print("Warning: Key does not exist")
+
+
     def remove(self, key):
         '''
         Remove the value stored with the given key.
@@ -74,22 +101,26 @@ class HashTable:
 
         Fill this in.
         '''
-        pos = self._hash_mod(key)
-        # Check if a pair exists in the bucket with matching keys
-        if self.storage[pos] is not None and self.storage[pos].key == key:
-            dummy_head = LinkedPair("dummy", "dummy")
-            head = dummy_head
-            dummy_head.next = self.storage[pos]
-
-            while head.next != None:
-                if head.next.key == key:
-                    head.next = head.next.next
-                    break
-                head = head.next
-            self.storage[pos] = dummy_head.next
+        index = self._hash_mod(key)
+        if self.storage[index]:
+            node = self.storage[index]
         else:
-            # Else print warning
-            print("Warning: Key does not exist")
+            return print("Warning: Key does not exist")
+        temp = None
+        while node.key != key:
+            temp = node
+            node = temp.next
+        if node is None:
+            return print("Warning: Key does not exist")
+        else:
+            if temp is None:
+                result = node.value
+                self.storage[index] = node.next
+                return result
+            else:
+                self.size -= 1
+                temp.next = node.next
+                return node.value
 
 
     def retrieve(self, key):
