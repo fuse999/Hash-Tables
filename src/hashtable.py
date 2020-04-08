@@ -124,16 +124,13 @@ class HashTable:
 
 
     def retrieve(self, key):
-        '''
-        Retrieve the value stored with the given key.
-        Returns None if the key is not found.
-        '''
-        pos = self._hash_mod(key)
-        head = self.storage[pos]
-        while head != None:
-            if head.key == key:
-                return head.value
-            head = head.next
+        index = self._hash_mod(key)
+        node = self.storage[index]
+        while node is not None:
+            if node.key == key:
+                return node.value
+            node = node.next
+        return None
 
 
     def resize(self):
@@ -143,15 +140,12 @@ class HashTable:
 
         Fill this in.
         '''
-        prev_storage = self.storage
-        prev_capacity = self.capacity
-        self.capacity = prev_capacity * 2
-        self.storage = [None] * self.capacity
-        for i in range(prev_capacity):
-            head = prev_storage[i]
-            while head != None:
-                self.insert(head.key, head.value)
-                head = head.next
+        self.old_stor_size = self.capacity
+        self.capacity *= 2
+        new_storage = [None] * self.capacity
+        for i in range(len(self.storage)):
+            new_storage[i] = self.storage[i]
+        self.storage = new_storage
 
 
 
