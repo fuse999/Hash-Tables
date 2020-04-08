@@ -132,20 +132,45 @@ class HashTable:
             node = node.next
         return None
 
+# Old code
+    # def resize(self):
+    #     '''
+    #     Doubles the capacity of the hash table and
+    #     rehash all key/value pairs.
+
+    #     Fill this in.
+    #     '''
+    #     self.old_stor_size = self.capacity
+    #     self.capacity *= 2
+    #     new_storage = [None] * self.capacity
+    #     for i in range(len(self.storage)):
+    #         new_storage[i] = self.storage[i]
+    #     self.storage = new_storage
+
 
     def resize(self):
         '''
         Doubles the capacity of the hash table and
         rehash all key/value pairs.
-
         Fill this in.
         '''
-        self.old_stor_size = self.capacity
-        self.capacity *= 2
-        new_storage = [None] * self.capacity
-        for i in range(len(self.storage)):
-            new_storage[i] = self.storage[i]
-        self.storage = new_storage
+        # doubling capacity
+        self.capacity = self.capacity*2
+
+        # saving existing storage and creating new blank storage
+        old_storage = []
+
+        for node in self.storage:
+            while node:
+                old_storage.append((node.key, node.value))
+                node = node.next
+
+        self.storage = [None] * self.capacity
+        
+        # adding each element from old storage to new storage
+        self.stored = 0
+        for i in old_storage:
+            self.insert(i[0], i[1])
 
 
 
