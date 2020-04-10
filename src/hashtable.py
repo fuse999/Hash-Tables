@@ -15,6 +15,8 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.size = 0
+        self.old_size = None
 
 
     def _hash(self, key):
@@ -46,16 +48,49 @@ class HashTable:
     def insert(self, key, value):
         '''
         Store the value with the given key.
-
-        # Part 1: Hash collisions should be handled with an error warning. (Think about and
-        # investigate the impact this will have on the tests)
-
-        # Part 2: Change this so that hash collisions are handled with Linked List Chaining.
-
-        Fill this in.
         '''
-        pass
 
+        index = self._hash_mod(key)# Get hash
+        node = self.storage[index]
+        # if it is not, then the node pointer will point to the current's next node
+        while node is not None and node.key != key:
+            node = node.next
+        if node is not None:# then I check if it is empty
+            node.value = value
+        else:
+            new_node = LinkedPair(key, value)
+            # if it is, we create the node on that index and return
+            new_node.next = self.storage[index]
+            self.storage[index] = new_node
+            # we increase the size by 1 since we are just adding one
+            self.size += 1
+
+
+# Old Remove
+    # def remove(self, key):
+    #     '''
+    #     Remove the value stored with the given key.
+
+    #     Print a warning if the key is not found.
+
+    #     Fill this in.
+    #     '''
+    #     pos = self._hash_mod(key)
+    #     # Check if a pair exists in the bucket with matching keys
+    #     if self.storage[pos] is not None and self.storage[pos].key == key:
+    #         dummy_head = LinkedPair("dummy", "dummy")
+    #         head = dummy_head
+    #         dummy_head.next = self.storage[pos]
+
+    #         while head.next != None:
+    #             if head.next.key == key:
+    #                 head.next = head.next.next
+    #                 break
+    #             head = head.next
+    #         self.storage[pos] = dummy_head.next
+    #     else:
+    #         # Else print warning
+    #         print("Warning: Key does not exist")
 
 
     def remove(self, key):
@@ -66,28 +101,76 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        if self.storage[index]:
+            node = self.storage[index]
+        else:
+            return print("Warning: Key does not exist")
+        temp = None
+        while node.key != key:
+            temp = node
+            node = temp.next
+        if node is None:
+            return print("Warning: Key does not exist")
+        else:
+            if temp is None:
+                result = node.value
+                self.storage[index] = node.next
+                return result
+            else:
+                self.size -= 1
+                temp.next = node.next
+                return node.value
 
 
     def retrieve(self, key):
-        '''
-        Retrieve the value stored with the given key.
+        index = self._hash_mod(key)
+        node = self.storage[index]
+        while node is not None:
+            if node.key == key:
+                return node.value
+            node = node.next
+        return None
 
-        Returns None if the key is not found.
+# Old code
+    # def resize(self):
+    #     '''
+    #     Doubles the capacity of the hash table and
+    #     rehash all key/value pairs.
 
-        Fill this in.
-        '''
-        pass
+    #     Fill this in.
+    #     '''
+    #     self.old_stor_size = self.capacity
+    #     self.capacity *= 2
+    #     new_storage = [None] * self.capacity
+    #     for i in range(len(self.storage)):
+    #         new_storage[i] = self.storage[i]
+    #     self.storage = new_storage
 
 
     def resize(self):
         '''
         Doubles the capacity of the hash table and
         rehash all key/value pairs.
-
         Fill this in.
         '''
-        pass
+        # doubling capacity
+        self.capacity = self.capacity*2
+
+        # saving existing storage and creating new blank storage
+        old_storage = []
+
+        for node in self.storage:
+            while node:
+                old_storage.append((node.key, node.value))
+                node = node.next
+
+        self.storage = [None] * self.capacity
+        
+        # adding each element from old storage to new storage
+        self.stored = 0
+        for i in old_storage:
+            self.insert(i[0], i[1])
 
 
 
